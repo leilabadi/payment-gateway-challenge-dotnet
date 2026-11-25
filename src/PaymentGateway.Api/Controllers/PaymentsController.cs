@@ -1,26 +1,37 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
+using PaymentGateway.Api.Mapings;
 using PaymentGateway.Api.Models.Responses;
-using PaymentGateway.Api.Services;
+using PaymentGateway.Core.Models;
+using PaymentGateway.Core.Services;
 
 namespace PaymentGateway.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class PaymentsController : Controller
+public class PaymentsController(PaymentsRepository paymentsRepository) : Controller
 {
-    private readonly PaymentsRepository _paymentsRepository;
-
-    public PaymentsController(PaymentsRepository paymentsRepository)
-    {
-        _paymentsRepository = paymentsRepository;
-    }
-
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<PostPaymentResponse?>> GetPaymentAsync(Guid id)
+    [ProducesResponseType<GetPaymentResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<GetPaymentResponse>> GetPaymentAsync(Guid id)
     {
-        var payment = _paymentsRepository.Get(id);
+        Payment? payment = paymentsRepository.Get(id);
 
-        return new OkObjectResult(payment);
+        if (payment == null)
+        {
+            return new NotFoundObjectResult(new ProblemDetails
+            {
+                Status = StatusCodes.Status404NotFound,
+                Title = "Payment not found"
+            });
+        }
+        else
+        {
+            var mapper = new GetPaymentResponseMapper();
+            var response = mapper.ToDto(payment);
+
+            return new OkObjectResult(response);
+        }
     }
 }
