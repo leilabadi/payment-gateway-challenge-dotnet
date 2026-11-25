@@ -5,16 +5,18 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 
 using PaymentGateway.Api.Controllers;
-using PaymentGateway.Api.Models.Responses;
-using PaymentGateway.Core.Models;
-using PaymentGateway.Core.Services;
+using PaymentGateway.Api.Features.Payments.GetPayment;
+using PaymentGateway.Application;
+using PaymentGateway.Application.Payments.Abstractions;
+using PaymentGateway.Domain.Entities;
+using PaymentGateway.Infrastructure;
 
 namespace PaymentGateway.Api.Tests;
 
 public class PaymentsControllerTests
 {
     private readonly Random _random = new();
-    
+
     [Fact]
     public async Task RetrievesAPaymentSuccessfully()
     {
@@ -29,19 +31,24 @@ public class PaymentsControllerTests
             Currency = "GBP"
         };
 
-        var paymentsRepository = new PaymentsRepository();
-        paymentsRepository.Add(payment);
+        var webApplicationFactory = new WebApplicationFactory<PaymentsController>()
+            .WithWebHostBuilder(builder => builder.ConfigureServices(services =>
+            {
+                ((ServiceCollection)services).AddApplication()
+                    .AddInfrastructure();
+            }));
 
-        var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
-        var client = webApplicationFactory.WithWebHostBuilder(builder =>
-            builder.ConfigureServices(services => ((ServiceCollection)services)
-                .AddSingleton(paymentsRepository)))
-            .CreateClient();
+        using var scope = webApplicationFactory.Services.CreateScope();
+        var paymentRepository = scope.ServiceProvider.GetRequiredService<IPaymentRepository>();
+
+        await paymentRepository.AddAsync(payment);
+
+        HttpClient client = webApplicationFactory.CreateClient();
 
         // Act
         var response = await client.GetAsync($"/api/Payments/{payment.Id}");
         var paymentResponse = await response.Content.ReadFromJsonAsync<GetPaymentResponse>();
-        
+
         // Assert
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.NotNull(paymentResponse);
@@ -53,10 +60,10 @@ public class PaymentsControllerTests
         // Arrange
         var webApplicationFactory = new WebApplicationFactory<PaymentsController>();
         var client = webApplicationFactory.CreateClient();
-        
+
         // Act
         var response = await client.GetAsync($"/api/Payments/{Guid.NewGuid()}");
-        
+
         // Assert
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
