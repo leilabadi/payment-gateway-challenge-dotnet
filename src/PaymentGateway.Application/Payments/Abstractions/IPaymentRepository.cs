@@ -1,4 +1,4 @@
-﻿using PaymentGateway.Domain.Entities;
+﻿using PaymentGateway.Domain.Payments.Entities;
 
 namespace PaymentGateway.Application.Payments.Abstractions;
 

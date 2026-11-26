@@ -1,5 +1,5 @@
 ﻿using PaymentGateway.Application.Payments.Abstractions;
-using PaymentGateway.Domain.Entities;
+using PaymentGateway.Domain.Payments.Entities;
 
 namespace PaymentGateway.Infrastructure.Persistence;
 

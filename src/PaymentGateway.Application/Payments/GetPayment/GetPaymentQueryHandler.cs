@@ -1,7 +1,7 @@
 ﻿using MediatR;
 
 using PaymentGateway.Application.Payments.Abstractions;
-using PaymentGateway.Domain.Enums;
+using PaymentGateway.Domain.Payments.Enums;
 
 namespace PaymentGateway.Application.Payments.GetPayment;
 

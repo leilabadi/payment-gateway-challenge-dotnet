@@ -1,6 +1,6 @@
-﻿using PaymentGateway.Domain.Enums;
+﻿using PaymentGateway.Domain.Payments.Enums;
 
-namespace PaymentGateway.Domain.Entities;
+namespace PaymentGateway.Domain.Payments.Entities;
 
 public class Payment
 {

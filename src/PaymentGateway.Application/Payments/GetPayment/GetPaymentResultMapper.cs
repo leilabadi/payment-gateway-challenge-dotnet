@@ -1,4 +1,4 @@
-﻿using PaymentGateway.Domain.Entities;
+﻿using PaymentGateway.Domain.Payments.Entities;
 
 using Riok.Mapperly.Abstractions;
 

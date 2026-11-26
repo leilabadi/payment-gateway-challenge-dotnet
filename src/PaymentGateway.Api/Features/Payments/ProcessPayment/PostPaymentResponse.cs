@@ -1,4 +1,4 @@
-﻿using PaymentGateway.Domain.Enums;
+﻿using PaymentGateway.Domain.Payments.Enums;
 
 namespace PaymentGateway.Api.Features.Payments.ProcessPayment;
 

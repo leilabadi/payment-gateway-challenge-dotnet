@@ -8,7 +8,7 @@ using PaymentGateway.Api.Controllers;
 using PaymentGateway.Api.Features.Payments.GetPayment;
 using PaymentGateway.Application;
 using PaymentGateway.Application.Payments.Abstractions;
-using PaymentGateway.Domain.Entities;
+using PaymentGateway.Domain.Payments.Entities;
 using PaymentGateway.Infrastructure;
 
 namespace PaymentGateway.Api.Tests;
